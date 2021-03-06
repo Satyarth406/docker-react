@@ -1,15 +1,10 @@
-FROM node:alpine as image1
+FROM node:alpine
+  WORKDIR '/app'
+  COPY package*.json ./
+  RUN npm install
+  COPY . .
+  RUN npm run build
 
-WORKDIR /app
-
-COPY package.json .
-
-RUN  npm install
-
-COPY . . 
-
-RUN npm run build
-
-FROM nginx
-EXPOSE 80
-COPY --from=image1 /app/build /usr/share/nginx/html
+  FROM nginx
+  EXPOSE 80
+  COPY --from=0 /app/build /usr/share/nginx/html
